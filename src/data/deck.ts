@@ -42,13 +42,29 @@ export const INITIAL_DECK: GameCard[] = [
   },
   {
     id: '4',
+    type: 'decision',
+    title: 'The Golden Statue',
+    content: 'The people want to honor you with a massive golden statue. It will cost a fortune but boost your ego... and popularity.',
+    leftChoice: {
+      text: 'A waste of gold.',
+      modifiers: { wealth: 5, popularity: -5 },
+      label: 'NO',
+    },
+    rightChoice: {
+      text: 'Build it taller!',
+      modifiers: { wealth: -25, popularity: 20 },
+      label: 'YES',
+    },
+  },
+  {
+    id: '5',
     type: 'transition',
     title: 'First Year Passed',
     content: 'You have survived your first year as a ruler. The winter was harsh, but the kingdom stands.',
     transitionAction: 'Continue',
   },
   {
-    id: '5',
+    id: '6',
     type: 'decision',
     title: 'Foreign Trade',
     content: 'A merchant from a faraway land offers a lucrative but risky trade deal.',
@@ -64,7 +80,7 @@ export const INITIAL_DECK: GameCard[] = [
     },
   },
   {
-    id: '6',
+    id: '7',
     type: 'transition',
     title: 'The End (For Now)',
     content: 'You have reached the end of the demo. More challenges await in the full version!',
