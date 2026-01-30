@@ -4,6 +4,7 @@ export interface CardChoice {
   text: string;
   modifiers: Record<string, number>;
   label?: string; // e.g. "YES" or "NO"
+  nextCardId?: string; // Branching logic
 }
 
 export interface GameCard {
@@ -15,6 +16,7 @@ export interface GameCard {
   leftChoice?: CardChoice;
   rightChoice?: CardChoice;
   transitionAction?: string; // e.g. "Continue"
+  nextCardId?: string; // For transition cards or linear progression
 }
 
 export interface GameStats {
