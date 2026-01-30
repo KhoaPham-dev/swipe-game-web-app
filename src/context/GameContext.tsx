@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { GameState, GameAction, GameStats } from '../types/game';
+import { GameState, GameAction, GameStats, GameCard } from '../types/game';
 import { INITIAL_DECK as deckData } from '../data/deck';
 
 const INITIAL_STATS: GameStats = {
@@ -20,17 +20,19 @@ const GameContext = createContext<{
   dispatch: React.Dispatch<GameAction>;
 } | undefined>(undefined);
 
-function gameReducer(state: GameState, action: GameAction): GameState {
+export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'SWIPE_LEFT': {
       const card = state.deck[state.currentIndex];
       if (card.type !== 'decision' || !card.leftChoice) return state;
       
       const nextStats = updateStats(state.stats, card.leftChoice.modifiers);
+      const nextIndex = getNextIndex(state, card.leftChoice.nextCardId);
+      
       return checkGameOver({
         ...state,
         stats: nextStats,
-        currentIndex: state.currentIndex + 1,
+        currentIndex: nextIndex,
       });
     }
     case 'SWIPE_RIGHT': {
@@ -38,23 +40,30 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       if (card.type !== 'decision' || !card.rightChoice) return state;
       
       const nextStats = updateStats(state.stats, card.rightChoice.modifiers);
+      const nextIndex = getNextIndex(state, card.rightChoice.nextCardId);
+      
       return checkGameOver({
         ...state,
         stats: nextStats,
-        currentIndex: state.currentIndex + 1,
+        currentIndex: nextIndex,
       });
     }
     case 'CONTINUE': {
       const card = state.deck[state.currentIndex];
       if (card.type !== 'transition') return state;
       
-      if (state.currentIndex >= state.deck.length - 1) {
-          return { ...INITIAL_STATE };
+      const nextIndex = getNextIndex(state, card.nextCardId);
+
+      if (nextIndex >= state.deck.length) {
+          return checkGameOver({
+            ...state,
+            currentIndex: nextIndex
+          });
       }
 
       return {
         ...state,
-        currentIndex: state.currentIndex + 1,
+        currentIndex: nextIndex,
       };
     }
     case 'RESET_GAME':
@@ -62,6 +71,14 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     default:
       return state;
   }
+}
+
+function getNextIndex(state: GameState, nextCardId?: string): number {
+  if (nextCardId) {
+    const index = state.deck.findIndex(c => c.id === nextCardId);
+    if (index !== -1) return index;
+  }
+  return state.currentIndex + 1;
 }
 
 function updateStats(stats: GameStats, modifiers: Record<string, number>): GameStats {

@@ -17,12 +17,22 @@ export const INITIAL_DECK: GameCard[] = [
       text: 'Too expensive.',
       modifiers: { popularity: -10, wealth: 5 },
       label: 'NO',
+      nextCardId: '3',
     },
     rightChoice: {
       text: 'Let them eat!',
       modifiers: { popularity: 15, wealth: -15 },
       label: 'YES',
+      nextCardId: 'feast-aftermath',
     },
+  },
+  {
+    id: 'feast-aftermath',
+    type: 'transition',
+    title: 'The Morning After',
+    content: 'The feast was a legendary success. The people love you, but the treasury is noticeably lighter.',
+    transitionAction: 'Proceed',
+    nextCardId: '3',
   },
   {
     id: '3',
